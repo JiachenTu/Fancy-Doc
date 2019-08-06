@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
 const { User, Document } = require('./models');
 const crypto = require('crypto');
+const cors = require('cors');
 
 //routes
 const dbAuth = require('./routes/auth.js');
@@ -36,6 +37,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
 	session({
