@@ -8,7 +8,7 @@ function Login() {
 		e.preventDefault();
 
 		// console.log('a)');
-		fetch('http://localhost:3000/login', {
+		fetch('http://192.168.1.23:3000/login', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -22,10 +22,12 @@ function Login() {
 		})
 			.then(resp => resp.json())
 			.then(respJson => {
-				alert(respJson);
 				if (respJson.success) {
 					alert('hello');
-					// return (<Redirect to="/" />)
+					return (
+						<Redirect to={{ pathname: '/userportal', state: { userId: respJson.user._id } }} />
+					);
+					// we can then access it from this.props.location.state.userId
 				}
 			});
 	}
@@ -52,6 +54,9 @@ function Login() {
 			</button>
 			<button>
 				<a href='/editor'> Editor </a>
+			</button>
+			<button>
+				<a href='/userportal'> UserPortal </a>
 			</button>
 		</div>
 	);

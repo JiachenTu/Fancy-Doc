@@ -103,25 +103,8 @@ app.use(function(req, res, next) {
 	next(err);
 });
 
-// // error handlers
-// // development error handler
-// // will print stacktrace
-// if (app.get('env') === 'development') {
-// 	app.use(function(err, req, res, next) {
-// 		res.status(err.status || 500);
-// 		res.json({ success: 'false', err });
-// 	});
-// }
-
-// // production error handler
-// // no stacktraces leaked to user
-// app.use(function(err, req, res, next) {
-// 	res.status(err.status || 500);
-// 	res.json({ success: 'false', err });
-// });
-
-app.listen(3000, () => {
-	console.log('Server for YouPick listening on port 3000!');
+app.listen(8080, () => {
+	console.log('Server for Fancy-Doc listening on port 8080!');
 });
 
 module.exports = app;
