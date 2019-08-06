@@ -22,10 +22,10 @@ function Login() {
         })
         .then(resp => resp.json())
         .then(respJson => {
-            alert(respJson)
             if (respJson.success) {
                 alert('hello');
-                // return (<Redirect to="/" />)
+                return (<Redirect to={{pathname: '/userportal', state:{userId: respJson.user._id}}}/>)
+                // we can then access it from this.props.location.state.userId
             }
         })
     }
@@ -40,6 +40,7 @@ function Login() {
         </form>
         <button><a href='/register'> Register </a></button>
         <button><a href='/editor'> Editor </a></button>
+        <button><a href='/userportal'> UserPortal </a></button>
     </div>
 
     )
