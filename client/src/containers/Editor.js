@@ -1,5 +1,5 @@
 import { EditorState, RichUtils } from "draft-js";
-import "./App.css";
+import "../css/App.css";
 import React, { Component } from "react";
 import Editor from "draft-js-plugins-editor";
 

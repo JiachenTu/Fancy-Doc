@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
 
 import Login from "./containers/Login";
 import Register from "./containers/Register";
+import Editor from "./containers/Editor";
 
 class App extends React.Component {
   render() {
@@ -17,6 +18,7 @@ class App extends React.Component {
             <Route exact={true} path="/" component={Login} />
             <Route exact={true} path="/login" component={Login} />
             <Route exact={true} path="/register" component={Register} />
+            <Route exact={true} path="/editor" component={Editor} />
             {/* <Route path="/directory" component={Directory} /> */}
 
             {/* A route with no path is matched unconditionally.*/}

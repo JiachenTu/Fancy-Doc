@@ -5,7 +5,8 @@ function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     function handleSubmit(e) {
-        // e.preventDefault();
+        e.preventDefault();
+
         // console.log('a)');
         fetch("http://192.168.1.23:3000/login", {
             method: 'POST',
@@ -38,6 +39,7 @@ function Login() {
             <button type='submit'>Login</button>
         </form>
         <button><a href='/register'> Register </a></button>
+        <button><a href='/editor'> Editor </a></button>
     </div>
 
     )
