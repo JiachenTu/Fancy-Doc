@@ -10,6 +10,7 @@ const mongoose = require("mongoose");
 const MongoStore = require("connect-mongo")(session);
 const { User, Document } = require("./models");
 const crypto = require("crypto");
+const cors = require("cors");
 
 //routes
 const dbAuth = require("./routes/auth.js");
@@ -92,7 +93,7 @@ passport.use(
 // app
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(cors);
 app.use("/", dbAuth(passport, hash));
 app.use("/", dbIndex());
 

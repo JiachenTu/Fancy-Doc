@@ -8,7 +8,7 @@ function Login() {
         e.preventDefault();
 
         // console.log('a)');
-        fetch("http://192.168.1.23:3000/login", {
+        fetch("http://localhost:8080/login", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"

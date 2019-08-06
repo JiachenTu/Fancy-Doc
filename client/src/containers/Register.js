@@ -4,19 +4,22 @@ import {Redirect} from 'react-router-dom';
 function Register() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
     function handleSubmit(e) {
         e.preventDefault();
         console.log('username',username);
-        fetch("http://localhost:3001/register", {
+        fetch('http://localhost:8080/register', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
             },
+            mode: 'no-cors',
             credentials: 'include',
             redirect: 'follow',
             body: JSON.stringify({
                 username: username,
-                password: password
+                password: password,
+                email: email
             })
         })
         .then(resp => resp.json())
@@ -35,6 +38,7 @@ function Register() {
             <input name="username" type='text' placeholder='Your username' onChange={(e) =>
                 setUsername(e.target.value)} />
             <input name='password' type='password' placeholder='Your password' onChange={(e) => setPassword(e.target.value)}/>
+            <input name='email' type='email' placeholder='Your email' onChange={(e) => setEmail(e.target.value)}/>
             <button type='submit'>Register</button>
         </form>
     </div>

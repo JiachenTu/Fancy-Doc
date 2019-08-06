@@ -6,7 +6,8 @@ function UserPortal() {
     function handleSubmit(e) {
         e.preventDefault();
 
-        fetch("http://localhost:3001/register", {
+        // make sure to specify the id of the specific user
+        fetch("http://localhost:8080/userportal", {
             method: 'GET',
             headers: {
                 "Content-Type": "application/json"
@@ -18,8 +19,7 @@ function UserPortal() {
         .then(respJson => {
             console.log(respJson)
             if (respJson.success) {
-                alert('successfully registered!!');
-                // return (<Redirect to="/" />)
+                // do thing here
             }
         })
     }
@@ -29,7 +29,7 @@ function UserPortal() {
         <h1>Documents Portal </h1>
         <input type='text' name='newDocTitle' placeholder='new document title' />
         <button>Create new document</button>
-    <Box></Box> {/* Box contains the documents user owns and is collaborating on */}
+        <Box></Box> {/* Box contains the documents user owns and is collaborating on */}
     </div>
 
     )
