@@ -37,7 +37,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(
 	session({
@@ -61,6 +61,7 @@ passport.deserializeUser(function(id, done) {
 
 function hash(password) {
 	var hash = crypto.createHash('sha256');
+	console.log(password);
 	hash.update(password);
 	return hash.digest('hex');
 }
