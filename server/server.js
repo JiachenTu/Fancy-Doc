@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const express = require("express");
 const path = require("path");
 const logger = require("morgan");
@@ -12,21 +11,6 @@ const MongoStore = require("connect-mongo")(session);
 const { User, Document } = require("./models");
 const crypto = require("crypto");
 const cors = require("cors");
-=======
-const express = require('express');
-const path = require('path');
-const logger = require('morgan');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const session = require('express-session');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const mongoose = require('mongoose');
-const MongoStore = require('connect-mongo')(session);
-const { User, Document } = require('./models');
-const crypto = require('crypto');
-const cors = require('cors');
->>>>>>> 23243c82f7dd43c2648d459479ca48ab211a3101
 
 //routes
 const dbAuth = require('./routes/auth.js');
@@ -109,15 +93,9 @@ passport.use(
 // app
 app.use(passport.initialize());
 app.use(passport.session());
-<<<<<<< HEAD
 app.use(cors);
 app.use("/", dbAuth(passport, hash));
 app.use("/", dbIndex());
-=======
-
-app.use('/', dbAuth(passport, hash));
-app.use('/', dbIndex());
->>>>>>> 23243c82f7dd43c2648d459479ca48ab211a3101
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

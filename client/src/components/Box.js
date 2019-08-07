@@ -3,11 +3,21 @@ import {Redirect} from 'react-router-dom';
 
 function Box() {
     return (
-        <div height='30' width='30' border='10 solid black'>
-            <span>{'Hello'}</span>
+        <div>
+            <div style={StyleSheet.box}>
+                <span>{'Hello'}</span>
+                <span>{'ola'}</span>
+                <div>olaola</div>
+                <div>olaola</div>
+                <div>olaola</div>
+            </div>
+
         </div>
         )
 }
 
-
+let StyleSheet = {
+    box: {height:'10%', width:'%', border:'2px solid black',
+            margin:'2%', padding:'1%'}
+}
 export default Box;

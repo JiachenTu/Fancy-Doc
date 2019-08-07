@@ -2,15 +2,23 @@ import React, {useState, useEffect} from 'react';
 import {Redirect} from 'react-router-dom';
 import Box from '../components/Box';
 
-function UserPortal() {
+function UserPortal(props) {
+
+    const [docs, setDocs] = useState([]);
+    const [userId, setUserId] = useState('');
+
+    console.log('props here is ', props);
     function handleSubmit(e) {
         e.preventDefault();
 
         // make sure to specify the id of the specific user
-        fetch("http://localhost:8080/userportal", {
-            method: 'GET',
+        fetch("http://cce64a5d.ngrok.io/userportal", {
+            method: 'POST',
             headers: {
                 "Content-Type": "application/json"
+            },
+            body: {
+                userId: props.location.state.userId // need to send in the userId coz the server is looking for it
             },
             credentials: 'include',
             redirect: 'follow',
