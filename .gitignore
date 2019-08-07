@@ -87,3 +87,6 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 env.sh
+
+
+.DS_Store
