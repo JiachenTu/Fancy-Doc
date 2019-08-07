@@ -8,12 +8,12 @@ function Register() {
     function handleSubmit(e) {
         e.preventDefault();
         console.log('username',username);
-        fetch('http://localhost:8080/register', {
+        fetch('http://98bfee00.ngrok.io/register', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
             },
-            mode: 'no-cors',
+            // mode: 'no-cors',
             credentials: 'include',
             redirect: 'follow',
             body: JSON.stringify({

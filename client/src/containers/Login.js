@@ -7,8 +7,8 @@ function Login() {
     function handleSubmit(e) {
         e.preventDefault();
 
-        // console.log('a)');
-        fetch("http://localhost:8080/login", {
+        console.log('start login', username, password);
+        fetch("http://98bfee00.ngrok.io/login", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -23,7 +23,7 @@ function Login() {
         .then(resp => resp.json())
         .then(respJson => {
             if (respJson.success) {
-                alert('hello');
+                alert('successfully logged in!');
                 return (<Redirect to={{pathname: '/userportal', state:{userId: respJson.user._id}}}/>)
                 // we can then access it from this.props.location.state.userId
             }

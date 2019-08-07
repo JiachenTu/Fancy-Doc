@@ -3,7 +3,7 @@ import {Redirect} from 'react-router-dom';
 
 function Box() {
     return (
-        <div>
+        <div height='30' width='30' border='10 solid black'>
             <span>{'Hello'}</span>
         </div>
         )
