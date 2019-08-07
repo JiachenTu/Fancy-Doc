@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Redirect} from 'react-router-dom';
+import React, { useState } from "react";
+import { Redirect } from "react-router-dom";
 
 function Register() {
     const [username, setUsername] = useState('');
@@ -32,18 +32,54 @@ function Register() {
         })
     }
 
-    return (
+  return (
     <div>
-        <form onSubmit = {handleSubmit}>
-            <input name="username" type='text' placeholder='Your username' onChange={(e) =>
-                setUsername(e.target.value)} />
-            <input name='password' type='password' placeholder='Your password' onChange={(e) => setPassword(e.target.value)}/>
-            <input name='email' type='email' placeholder='Your email' onChange={(e) => setEmail(e.target.value)}/>
-            <button type='submit'>Register</button>
-        </form>
+      <form onSubmit={handleSubmit} className="form">
+        <h3>Register</h3>
+        <div className="form-group">
+          <label>Username</label>
+          <input
+            type="text"
+            name="username"
+            className="form-control"
+            onChange={e => setUsername(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label>Email</label>
+          <input
+            type="text"
+            name="username"
+            className="form-control"
+            onChange={e => setEmail(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            name="password"
+            className="form-control"
+            onChange={e => setPassword(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <button className="btn btn-success">Register</button>
+          <p />
+          <button>
+            <a className="btn btn-primary" href="/login">
+              Login
+            </a>
+          </button>
+          <button>
+            <a className="btn btn-primary" href="/editor">
+              Editor
+            </a>
+          </button>
+        </div>
+      </form>
     </div>
-
-    )
+  );
 }
 
 export default Register;

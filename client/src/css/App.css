@@ -45,3 +45,11 @@
   border: 1px solid grey;
   padding: 6px;
 }
+
+form {
+  max-width: 300px;
+  margin: auto;
+  margin-top: 50px;
+  border: 0.5px solid gray;
+  padding: 30px 30px 30px 30px;
+}

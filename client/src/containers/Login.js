@@ -1,11 +1,12 @@
-import React, {useState} from 'react';
-import {Redirect} from 'react-router-dom';
+import React, { useState } from "react";
+import { Redirect } from "react-router-dom";
 
 function Login() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    function handleSubmit(e) {
-        e.preventDefault();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  function handleSubmit(e) {
+    e.preventDefault();
 
         console.log('start login', username, password);
         fetch("http://98bfee00.ngrok.io/login", {
@@ -30,20 +31,53 @@ function Login() {
         })
     }
 
-    return (
+  return (
     <div>
-        <form onSubmit = {handleSubmit}>
-            <input name="username" type='text' placeholder='Your username' onChange={(e) =>
-                setUsername(e.target.value)} />
-            <input name='password' type='password' placeholder='Your password' onChange={(e) => setPassword(e.target.value)}/>
-            <button type='submit'>Login</button>
-        </form>
-        <button><a href='/register'> Register </a></button>
-        <button><a href='/editor'> Editor </a></button>
-        <button><a href='/userportal'> UserPortal </a></button>
+      <form onSubmit={handleSubmit} className="form">
+        <h3>Login</h3>
+        <div className="form-group">
+          <label>Username</label>
+          <input
+            type="text"
+            name="username"
+            className="form-control"
+            onChange={e => setUsername(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label>Email</label>
+          <input
+            type="text"
+            name="username"
+            className="form-control"
+            onChange={e => setEmail(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            name="password"
+            className="form-control"
+            onChange={e => setPassword(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <button className="btn btn-success">Login</button>
+          <button>
+            <a className="btn btn-primary" href="/register">
+              Register
+            </a>
+          </button>
+          <button>
+            <a className="btn btn-primary" href="/editor">
+              Editor
+            </a>
+          </button>
+        </div>
+      </form>
     </div>
-
-    )
+  );
 }
 
 export default Login;

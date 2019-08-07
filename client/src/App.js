@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
+import React from "react";
+import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
 
 import Login from "./containers/Login";
 import Register from "./containers/Register";
@@ -11,7 +11,10 @@ class App extends React.Component {
     return (
       <BrowserRouter>
         <div>
-          <Route path="/:anything" render={() => <Link to="/">Back to Home</Link>} />
+          <Route
+            path="/:anything"
+            render={() => <Link to="/">Back to Home</Link>}
+          />
           {/* Normally multiple routes can match at once.*/}
           {/* In a Switch, only the 1st matched route renders.*/}
           <Switch>
@@ -30,6 +33,6 @@ class App extends React.Component {
       </BrowserRouter>
     );
   }
-};
+}
 
 export default App;
