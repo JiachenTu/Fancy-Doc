@@ -5,6 +5,10 @@ import Box from '../components/Box';
 function UserPortal(props) {
 
     const [docs, setDocs] = useState([]);
+    if (!props.location.state) {
+        alert('please log in first to be able to visit userportal');
+        return <Redirect to='/login' />;
+    }
     let userId = props.location.state.userId;
 
     console.log('props here is ', props);

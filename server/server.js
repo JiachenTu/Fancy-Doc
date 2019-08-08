@@ -93,7 +93,6 @@ passport.use(
 // app
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(cors);
 app.use("/", dbAuth(passport, hash));
 app.use("/", dbIndex());
 

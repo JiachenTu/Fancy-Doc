@@ -31,15 +31,13 @@ function Login() {
             //alert('successfully logged in!');
             // return (<Redirect to={{pathname: '/userportal', state:{userId: respJson.user._id}}}/>)
             // return (<Redirect to='/userportal' />);
-            // we can then access it from this.props.location.state.userId
+            // we can then access it from props.location.state.userId
         }
     })
   }
 
     if (userId !== '')  { // same as checking is login was successful
         console.log('userId is ', userId);
-        //setLoggedIn(false);
-        alert('logged in')
         return (<Redirect to={{pathname: '/userportal', state:{userId: userId}}}/>)
     }
     else

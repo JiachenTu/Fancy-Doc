@@ -5,6 +5,8 @@ function Register() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
+    const [registered, setRegistered] = useState(false);
+
     function handleSubmit(e) {
         e.preventDefault();
         console.log('username',username);
@@ -13,7 +15,6 @@ function Register() {
             headers: {
                 "Content-Type": "application/json"
             },
-            // mode: 'no-cors',
             credentials: 'include',
             redirect: 'follow',
             body: JSON.stringify({
@@ -24,15 +25,21 @@ function Register() {
         })
         .then(resp => resp.json())
         .then(respJson => {
-            console.log(respJson)
+            console.log('respJson is ', respJson)
             if (respJson.success) {
-                alert('successfully registered!!');
-                // return (<Redirect to="/" />)
+                console.log('successfully registered!');
+                setRegistered(true);
             }
         })
+        .catch(err => console.log('An error occurred here', err))
     }
 
-  return (
+    if (registered) {
+        alert('You are registered but you need to login pls');
+        return (<Redirect to='/login'/>);
+    }
+    else
+    return (
     <div>
       <form onSubmit={handleSubmit} className="form">
         <h3>Register</h3>
