@@ -8,7 +8,7 @@ function Register() {
     function handleSubmit(e) {
         e.preventDefault();
         console.log('username',username);
-        fetch('http://cce64a5d.ngrok.io/register', {
+        fetch('http://26ff7f99.ngrok.io/register', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"

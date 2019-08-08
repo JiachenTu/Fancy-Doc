@@ -9,7 +9,7 @@ function Login() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    fetch("http://cce64a5d.ngrok.io/login", {
+    fetch("http://26ff7f99.ngrok.io/login", {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"

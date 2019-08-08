@@ -5,20 +5,20 @@ import Box from '../components/Box';
 function UserPortal(props) {
 
     const [docs, setDocs] = useState([]);
-    const [userId, setUserId] = useState('');
+    let userId = props.location.state.userId;
 
     console.log('props here is ', props);
     function handleSubmit(e) {
         e.preventDefault();
 
         // make sure to specify the id of the specific user
-        fetch("http://cce64a5d.ngrok.io/userportal", {
+        fetch("http://26ff7f99.ngrok.io/userportal", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
             },
             body: {
-                userId: props.location.state.userId // need to send in the userId coz the server is looking for it
+                userId: userId // need to send in the userId coz the server is looking for it
             },
             credentials: 'include',
             redirect: 'follow',
@@ -37,7 +37,7 @@ function UserPortal(props) {
         <h1>Documents Portal </h1>
         <input type='text' name='newDocTitle' placeholder='new document title' />
         <button>Create new document</button>
-        <Box></Box> {/* Box contains the documents user owns and is collaborating on */}
+        <Box userId=''></Box> {/* Box contains the documents user owns and is collaborating on */}
     </div>
 
     )
