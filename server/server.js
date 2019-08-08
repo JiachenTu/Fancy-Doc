@@ -12,11 +12,30 @@ const { User, Document } = require('./models');
 const crypto = require('crypto');
 const cors = require('cors');
 
+const socket = require('socket.io');
+
 //routes
 const dbAuth = require('./routes/auth.js');
 const dbIndex = require('./routes/index.js');
 
 const app = express();
+const server = require('http').createServer(app);
+const io = socket(server);
+app.use(express.static(path.join(__dirname, 'public')));
+
+io.on('connection', socket => {
+	console.log('somebody is on!!');
+	socket.emit('start', 'server and client connected');
+	//receive update request -- send merge request to clients
+	socket.on('content_update_push', receivedContentState => {
+		console.log('emit content_update_merge');
+		io.emit('content_update_merge', receivedContentState);
+	});
+	socket.on('selection_update_push', receivedContentState => {
+		console.log('--emit selection_update_push');
+		io.emit('selection_update_merge', receivedContentState);
+	});
+});
 
 //MongoDB
 if (!process.env.MONGODB_URI) {
@@ -104,7 +123,7 @@ app.use(function(req, res, next) {
 	next(err);
 });
 
-app.listen(8080, () => {
+server.listen(8080, () => {
 	console.log('Server for Fancy-Doc listening on port 8080!');
 });
 
