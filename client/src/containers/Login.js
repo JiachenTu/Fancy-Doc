@@ -15,7 +15,7 @@ function Login() {
             "Content-Type": "application/json"
         },
         credentials: 'include',
-        redirect: 'follow',
+        // redirect: 'follow',
         body: JSON.stringify({
             username: username,
             password: password
@@ -77,11 +77,6 @@ function Login() {
             <button>
                 <a className="btn btn-primary" href="/register">
                 Register
-                </a>
-            </button>
-            <button>
-                <a className="btn btn-primary" href="/editor">
-                Editor
                 </a>
             </button>
             </div>

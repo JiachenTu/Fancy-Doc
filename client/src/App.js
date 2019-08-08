@@ -20,6 +20,7 @@ class App extends React.Component {
           <Switch>
             {/* Your routes here */}
             <Route exact={true} path="/" component={Login} />
+            <Route path="/editor" component={Editor} />
             <Route exact={true} path="/login" component={Login} />
             <Route exact={true} path="/register" component={Register} />
             <Route exact={true} path="/editor" component={Editor} />

@@ -24,22 +24,32 @@ module.exports = function() {
 
 	// create a new document when user click button for "create new document"
 	router.post('/document/new', (req, res) => {
-		console.log('/document/new', req.body);
+		// console.log('/document/new', req.body);
 		//accept document without password
-		if (!req.body.owner || !req.body.title) {
-			res.json({
+		console.log('req.body here is ', req.body);
+		if ( !req.body.title) {
+			return res.json({
 				success: false,
-				error: 'owner or title does not exist'
+				error: 'title does not exist'
 			});
 		}
 		const newDoc = new Document({
-			owner: req.body.owner,
+			owner: req.user._id,
 			title: req.body.title,
-			password: req.body.password
+			// password: req.user.password
 		});
 		newDoc.save((err, doc) => {
-			if (err) res.json({ success: false, error: err });
-			res.json({ success: true });
+			if (err) return res.json({ success: false, error: err });
+
+			User.findById(req.user._id).exec((err, user)=> {
+				user.owned.push(doc._id);
+				user.save((err, user)=> {
+					if (err) return res.json({success: false, error: err})
+
+					res.json({ success: true });
+				})
+			})
+
 		});
 	});
 
