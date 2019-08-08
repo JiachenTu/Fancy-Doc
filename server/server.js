@@ -16,6 +16,11 @@ const dbAuth = require("./routes/auth.js");
 const dbIndex = require("./routes/index.js");
 
 const app = express();
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
+require("./socket.js")(io);
+
+const _ = require("underscore");
 
 //MongoDB
 if (!process.env.MONGODB_URI) {
@@ -96,6 +101,9 @@ app.use(passport.session());
 app.use("/", dbAuth(passport, hash));
 app.use("/", dbIndex());
 
+io.on("connection", socket => {
+  console.log("a socket connected");
+});
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error("Not Found");
@@ -103,7 +111,7 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-app.listen(8080, () => {
+http.listen(8080, () => {
   console.log("Server for Fancy-Doc listening on port 8080!");
 });
 
