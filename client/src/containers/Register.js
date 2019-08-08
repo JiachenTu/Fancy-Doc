@@ -2,36 +2,44 @@ import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 
 function Register() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  function handleSubmit(e) {
-    e.preventDefault();
-    console.log("username", username);
-    fetch("http://localhost:3001/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      credentials: "include",
-      redirect: "follow",
-      body: JSON.stringify({
-        username: username,
-        password: password,
-        email: email
-      })
-    })
-      .then(resp => resp.json())
-      .then(respJson => {
-        console.log(respJson);
-        if (respJson.success) {
-          alert("successfully registered!!");
-          // return (<Redirect to="/" />)
-        }
-      });
-  }
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
+    const [registered, setRegistered] = useState(false);
 
-  return (
+    function handleSubmit(e) {
+        e.preventDefault();
+        console.log('username',username);
+        fetch('http://26ff7f99.ngrok.io/register', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: 'include',
+            redirect: 'follow',
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                email: email
+            })
+        })
+        .then(resp => resp.json())
+        .then(respJson => {
+            console.log('respJson is ', respJson)
+            if (respJson.success) {
+                console.log('successfully registered!');
+                setRegistered(true);
+            }
+        })
+        .catch(err => console.log('An error occurred here', err))
+    }
+
+    if (registered) {
+        alert('You are registered but you need to login pls');
+        return (<Redirect to='/login'/>);
+    }
+    else
+    return (
     <div>
       <form onSubmit={handleSubmit} className="form">
         <h3>Register</h3>

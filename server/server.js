@@ -10,6 +10,7 @@ const mongoose = require("mongoose");
 const MongoStore = require("connect-mongo")(session);
 const { User, Document } = require("./models");
 const crypto = require("crypto");
+const cors = require("cors");
 
 //routes
 const dbAuth = require("./routes/auth.js");
@@ -41,8 +42,9 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
 
 app.use(logger("dev"));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   session({
@@ -66,6 +68,7 @@ passport.deserializeUser(function(id, done) {
 
 function hash(password) {
   var hash = crypto.createHash("sha256");
+  console.log(password);
   hash.update(password);
   return hash.digest("hex");
 }
@@ -97,7 +100,6 @@ passport.use(
 // app
 app.use(passport.initialize());
 app.use(passport.session());
-
 app.use("/", dbAuth(passport, hash));
 app.use("/", dbIndex());
 
