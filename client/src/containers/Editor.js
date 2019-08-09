@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import Editor from 'draft-js-plugins-editor';
 import io from 'socket.io-client';
 import { is } from 'immutable';
-import { debounce } from 'lodash';
+// import { debounce } from 'lodash';
 const serverURL = 'http://localhost:8080';
 const socket = io(serverURL);
 
@@ -12,70 +12,35 @@ export default class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { editorState: EditorState.createEmpty() };
-		// this.sendData = debounce(
-		// 	editorState => {
-		// 		socket.emit('content_update_push', convertToRaw(editorState.getCurrentContent()));
-		// 	},
-		// 	3000,
-		// 	{ leading: false, trailing: true }
-		// );
-
-		// this.sendData
 		this.first = true;
 		this.onChange = editorState => {
-			// console.log('before change -- ', this.state.editorState);
-			// this.setState({ editorState });
-
 			console.log('============ ON CHANGE ===============');
-			console.log('changed contentState', editorState.getCurrentContent().toJS());
-			console.log('original --', this.state.editorState.getCurrentContent().toJS());
-			// console.log(editorState.getSelection().toJS());
-			if (this.first) {
-				this.editorState = editorState;
-			}
-
-			// distinguish between changes that update selection vs content
+			console.log('changed contentState:', editorState.getCurrentContent().toJS());
+			console.log('original contentState:', this.state.editorState.getCurrentContent().toJS());
 			const isContentChanged = is(
 				this.state.editorState.getCurrentContent().getBlockMap(),
 				editorState.getCurrentContent().getBlockMap()
 			);
 			console.log('isContentChanged', isContentChanged);
 			this.setState({ editorState });
-			this.editorState = editorState;
 			if (isContentChanged) {
-				console.log('selection emit');
 				socket.emit('selection_update_push', convertToRaw(editorState.getCurrentContent()));
 			} else {
 				socket.emit('content_update_push', convertToRaw(editorState.getCurrentContent()));
 			}
-			// }
-			this.first = false;
-			// setTimeout(() => {
-			// 	const newEditorState = EditorState.push(this.editorState, editorState.getCurrentContent());
-			// 	this.setState({ editorState: newEditorState });
-			// }, 500);
-			// this.sendData(editorState);
-			// this.setState({ selObj: window.getSelection() });
-			// socket.emit('content_update_push', convertToRaw(editorState.getCurrentContent()));
 		};
 		socket.on('content_update_merge', receivedContentState => {
 			console.log('updating editorState with new contentState');
-			let convert = convertFromRaw(receivedContentState);
-			let currentState = this.editorState.getCurrentContent();
+			let contentStateToUpd = convertFromRaw(receivedContentState);
+			let currentState = this.state.editorState.getCurrentContent();
 			let finalContentState = currentState
-				.set('blockMap', convert.getBlockMap())
-				.set('entityMap', convert.getEntityMap());
-			// console.log(finalContentState.toJS());
-			// console.log(this.editorState.getSelection().toJS());
+				.set('blockMap', contentStateToUpd.getBlockMap())
+				.set('entityMap', contentStateToUpd.getEntityMap());
 			const updEditorState = EditorState.push(
-				this.editorState,
+				this.state.editorState,
 				finalContentState,
 				'change-block-data'
 			);
-			// let newEditorState = EditorState.acceptSelection(
-			// 	updEditorState,
-			// 	updEditorState.getSelection()
-			// );
 			let newEditorState = EditorState.forceSelection(
 				updEditorState,
 				updEditorState.getSelection()
@@ -85,22 +50,16 @@ export default class App extends React.Component {
 
 		socket.on('selection_update_merge', receivedContentState => {
 			console.log('updating editorState with new selectionState');
-			let convert = convertFromRaw(receivedContentState);
-			let currentState = this.editorState.getCurrentContent();
+			let contentStateToUpd = convertFromRaw(receivedContentState);
+			let currentState = this.state.editorState.getCurrentContent();
 			let finalContentState = currentState
-				.set('blockMap', convert.getBlockMap())
-				.set('entityMap', convert.getEntityMap());
-			// console.log(finalContentState.toJS());
-			// console.log(this.editorState.getSelection().toJS());
+				.set('blockMap', contentStateToUpd.getBlockMap())
+				.set('entityMap', contentStateToUpd.getEntityMap());
 			const updEditorState = EditorState.push(
-				this.editorState,
+				this.state.editorState,
 				finalContentState,
 				'change-block-data'
 			);
-			// let newEditorState = EditorState.acceptSelection(
-			// 	updEditorState,
-			// 	updEditorState.getSelection()
-			// );
 			let newEditorState = EditorState.acceptSelection(
 				updEditorState,
 				updEditorState.getSelection()
@@ -113,19 +72,6 @@ export default class App extends React.Component {
 		socket.on('start', msg => {
 			console.log(msg);
 		});
-	}
-	// componentDidUpdate(prevStates) {
-	// 	if (!is(this.state.editorState, prevStates.editorState)) {
-	// 		console.log('emit content_update_push');
-	// 			}
-	// }
-
-	componentDidUpdate() {
-		// console.log(
-		// 	'updated',
-		// 	this.state.editorState.getSelection().toJS(),
-		// 	this.state.editorState.getCurrentContent().toJS()
-		// );
 	}
 
 	_onBoldClick() {
