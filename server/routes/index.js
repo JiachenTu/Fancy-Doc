@@ -55,30 +55,36 @@ module.exports = function() {
 
 	// save the doc in the database (it should already exist
 	// since we save it in the db when creating it) when the user clicks save
-	router.post('/document/save', (req, res) => {
+	router.post('/:document/save', async (req, res) => {
+		console.log('reaching here');
 		console.log('req.body here is ', req.body);
-		let docTitle = req.body.docTitle; // look at req.body
+		// let docTitle = req.body.docTitle; // look at req.body
 		let docId = req.body.docId;  // need to make sure this is correct
-		Document.findByIdAndUpdate(docId, {content: newContent},
-			{new: true}, (err, updatedDoc) => {
-			if (err) console.log('error in /document/save route', err)
-			else {
-				res.json({ success: true, data: updatedDoc });
-			}
-		});
+		let newContent = req.body.newContent;
+		const existingDoc = await Document.findById(docId);
+		//	what if for some reason this won't finish because it can't find?
+
+		existingDoc.content = newContent
+		const data = await existingDoc.save()
+
+		return res.json({
+			success: true,
+			data
+		})
 	});
 
 	// when user clicks the link for a document, we provide the document object from database
-	router.post('/document/edit', (req, res) => {
-		if (!req.body.title) {
+	router.get('/document/:docId/get', (req, res) => {
+		const docid = req.params.docId;
+		if (!docid) {
 			res.json({
 				success: false,
-				error: 'title does not exist'
+				error: 'should pass in the id of the document'
 			});
 		}
-		Document.findOne({ title: req.body.title }).exec((err, doc) => {
+		Document.findById(docid).exec((err, doc) => {
 			if (err) res.json({ success: false, error: err });
-			res.json({ success: true, data: doc });
+			res.json({ success: true, data: doc.content });
 		});
 	});
 
