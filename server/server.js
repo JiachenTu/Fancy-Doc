@@ -21,19 +21,21 @@ const dbIndex = require('./routes/index.js');
 const app = express();
 const server = require('http').createServer(app);
 const io = socket(server);
+//
 app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', socket => {
 	console.log('somebody is on!!');
+	// console.log('req.user', req.user);
 	socket.emit('start', 'server and client connected');
 	//receive update request -- send merge request to clients
 	socket.on('content_update_push', receivedContentState => {
-		console.log('emit content_update_merge');
+		// console.log('emit content_update_merge');
 		io.emit('content_update_merge', receivedContentState);
 	});
-	socket.on('selection_update_push', receivedContentState => {
-		console.log('--emit selection_update_push');
-		io.emit('selection_update_merge', receivedContentState);
+	socket.on('selection_update_push', receivedSelectionState => {
+		// console.log('--emit selection_update_merge');
+		io.emit('selection_update_merge', receivedSelectionState);
 	});
 });
 
