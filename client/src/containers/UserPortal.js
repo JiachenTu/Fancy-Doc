@@ -1,16 +1,16 @@
-import React, {useState, useEffect} from 'react';
-import {Redirect} from 'react-router-dom';
-import Box from '../components/Box';
+import React, { useState, useEffect } from "react";
+import { Redirect, Link } from "react-router-dom";
+import Box from "../components/Box";
 
 function UserPortal(props) {
 
     const [ownedDocs, setOwnedDocs] = useState([]);
     const [collabDocs, setCollabDocs] = useState([]);
     const [title, setTitle] = useState('');
-
+    const [tracker, setTracker] = useState(false)
+    const [newDocId, setNewDocId] = useState('');
 
     let userId;
-    let tracker = false;
     if (props.location.state)
         userId = props.location.state.userId;
 
@@ -20,7 +20,7 @@ function UserPortal(props) {
         if (!props.location.state) return;
 
 
-        fetch("http://26ff7f99.ngrok.io/userportal", {
+        fetch("http://447cf3ab.ngrok.io/userportal", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -45,7 +45,7 @@ function UserPortal(props) {
     function handleSubmit(e) {
         e.preventDefault();
 
-        fetch("http://26ff7f99.ngrok.io/document/new", {
+        fetch("http://447cf3ab.ngrok.io/document/new", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -63,7 +63,12 @@ function UserPortal(props) {
             if (respJson.success) {
                 // do thing here
                 console.log("document created");
-                tracker = !tracker;
+                setTracker(!tracker)
+                setTitle('')
+                // console.log(respJson);
+                setNewDocId(respJson._id);
+                // return <Redirect to='/login' />;
+                // return (<Redirect to={{pathname: "/editor/" + ownedDocs[ownedDocs.length - 1]._id}} />)
             }
         })
         .catch(err => console.log('error while creating document', err));
@@ -74,13 +79,16 @@ function UserPortal(props) {
         alert('please log in first to be able to visit userportal');
         return <Redirect to='/login' />;
     };
+    if (newDocId != '') {
+        return <Redirect to={'/editor/'+newDocId} />
+    }
 
 
     return (
     <div>
         <h1>Documents Portal </h1>
 
-        <input type='text' name='newDocTitle' placeholder='new document title' onChange = {(e)=> setTitle(e.target.value)} />
+        <input type='text' name='newDocTitle' placeholder='new document title' value={title} onChange = {(e)=> setTitle(e.target.value)} />
         <button onClick={(e) => handleSubmit(e)}>Create new document</button>
         <div style={StyleSheet.box}>
             <div>Owned Docs:</div>
@@ -92,14 +100,22 @@ function UserPortal(props) {
                 <ul>{collabDocs.map((doc) => <li>{doc.title}</li>)}</ul>
             </div>
         </div>
-    </div>
-
-    )
+      </div>
+  );
 }
+
+// app.post('/editor/:id/save', function(req, res) {
+//     req.params.id;
+// });
 
 let StyleSheet = {
-    box: {height:'10%', width:'%', border:'2px solid black',
-            margin:'2%', padding:'1%'}
-}
+  box: {
+    height: "10%",
+    width: "%",
+    border: "2px solid black",
+    margin: "2%",
+    padding: "1%"
+  }
+};
 
 export default UserPortal;

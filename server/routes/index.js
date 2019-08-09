@@ -66,59 +66,112 @@ module.exports = function() {
     });
   });
 
-  //add collaborator: --> (email, documentId)
-  router.post("/document/collaborate/add", (req, res) => {
-    console.log("/document/password/add", req.body);
-    if (!req.body.email || !req.body.documentId) {
-      res.json({ success: false, error: "email or documentId does not exist" });
-    }
-    Document.findOne({ _id: req.body.documentId }).exec((err, doc) => {
-      if (err)
-        res.json({ success: false, error: "document finding failure" + err });
-      User.findOne({ email: req.body.email }).exec((err, user) => {
-        if (err)
-          res.json({ success: false, error: "user finding failure" + err });
-        doc.collaborators = [...doc.collaborators, user._id];
-        doc.collaborators = doc.collaborators.filter(onlyUnique);
-        //update the document
-        doc.save((err, savedDoc) => {
-          if (err)
-            res.json({
+	// when user clicks the link for a document, we provide the document object from database
+	router.get('/document/:docId/get', (req, res) => {
+		const docid = req.params.docId;
+		if (!docid) {
+			res.json({
+				success: false,
+				error: 'should pass in the id of the document'
+			});
+		}
+		Document.findById(docid).exec((err, doc) => {
+			if (err) res.json({ success: false, error: err });
+			res.json({ success: true, data: doc.content });
+		});
+	});
+  // when user click the link for a document, we provide the document object from database
+  // save the doc in the database (it should already exist
+  // since we save it in the db when creating it) when the user clicks save
+  router.post("/document/:docId/save", (req, res) => {
+    const docid = req.params.docId;
+    // console.log('req.body here is ', req.body);
+
+    Document.findById(docid).exec((err, doc) => {
+      if (err) return res.json({ success: false, error: err });
+      doc.content = req.body.content;
+      doc.save((err, doc) => {
+        if (err) return res.json({ success: false, error: err });
+        res.json({ success: true, data: req.body.content });
+      });
+    });
+
+    // add collaborator in userportal
+    router.post("/document/:docId/addCollab", (req, res) => {
+      const docid = req.params.docId;
+
+      Document.findById(docid).exec((err, doc) => {
+        if (err) return res.json({ success: false, error: err });
+        User.findOne({ email: req.body.email }).exec((err2, user) => {
+          if (err2) return res.json({ success: false, error: err2 });
+          if (!user)
+            return res.json({
               success: false,
-              error: "document saving failure" + err
+              error: "user is not found from the email entered"
             });
-          console.log("savedDoc", savedDoc);
-          //update the user
-          user.collaborated = [...user.collaborated, savedDoc._id];
-          user.collaborated = user.collaborated.filter(onlyUnique);
-          user.save((err, savedUser) => {
-            if (err) res.json({ success: false, error: err });
-            console.log("savedUser", savedUser);
-            res.json({ success: true });
+          doc.collaborators.push(user._id);
+          doc.save((err, doc) => {
+            res.json({ success: true, data: doc });
           });
         });
       });
     });
-  });
-
-  //add password -->(password, documentId)
-  router.post("/document/password/add", (req, res) => {
-    console.log("/document/password/add", req.body);
-    if (!req.body.password || !req.body.documentId) {
-      res.json({
-        success: false,
-        error: "password or documentId does not exist"
+    // add collaborator: --> (email, documentId)
+    router.post("/document/collaborate/add", (req, res) => {
+      console.log("/document/password/add", req.body);
+      if (!req.body.email || !req.body.documentId) {
+        res.json({
+          success: false,
+          error: "email or documentId does not exist"
+        });
+      }
+      Document.findOne({ _id: req.body.documentId }).exec((err, doc) => {
+        if (err)
+          res.json({ success: false, error: "document finding failure" + err });
+        User.findOne({ email: req.body.email }).exec((err, user) => {
+          if (err)
+            res.json({ success: false, error: "user finding failure" + err });
+          doc.collaborators = [...doc.collaborators, user._id];
+          doc.collaborators = doc.collaborators.filter(onlyUnique);
+          //update the document
+          doc.save((err, savedDoc) => {
+            if (err)
+              res.json({
+                success: false,
+                error: "document saving failure" + err
+              });
+            console.log("savedDoc", savedDoc);
+            //update the user
+            user.collaborated = [...user.collaborated, savedDoc._id];
+            user.collaborated = user.collaborated.filter(onlyUnique);
+            user.save((err, savedUser) => {
+              if (err) res.json({ success: false, error: err });
+              console.log("savedUser", savedUser);
+              res.json({ success: true });
+            });
+          });
+        });
       });
-    }
-    Document.findOne({ _id: req.body.documentId }).exec((err, doc) => {
-      if (err) res.json({ success: false, error: err });
-      doc.password = req.body.password;
-      doc.save((err, retDoc) => {
+    });
+
+    // add password -->(password, documentId)
+    router.post("/document/password/add", (req, res) => {
+      console.log("/document/password/add", req.body);
+      if (!req.body.password || !req.body.documentId) {
+        res.json({
+          success: false,
+          error: "password or documentId does not exist"
+        });
+      }
+      Document.findOne({ _id: req.body.documentId }).exec((err, doc) => {
         if (err) res.json({ success: false, error: err });
-        res.json({ success: true });
+        doc.password = req.body.password;
+        doc.save((err, retDoc) => {
+          if (err) res.json({ success: false, error: err });
+          res.json({ success: true });
+        });
       });
     });
   });
-
   return router;
 };

@@ -4,6 +4,7 @@ import {
 	convertFromRaw,
 	convertToRaw,
 	Modifier,
+	ContentState,
 	SelectionState
 } from 'draft-js';
 import '../css/App.css';
@@ -12,9 +13,9 @@ import Editor from 'draft-js-plugins-editor';
 import io from 'socket.io-client';
 import _ from 'underscore';
 import { is, fromJS } from 'immutable';
-// import { debounce } from 'lodash';
-const serverURL = 'http://localhost:8080';
+const serverURL = 'http://447cf3ab.ngrok.io';
 const socket = io(serverURL);
+// const docId = req.params.id;
 
 export default class App extends React.Component {
 	constructor(props) {
@@ -181,6 +182,58 @@ export default class App extends React.Component {
 		this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, 'UNDERLINE'));
 	}
 
+	// whenever this component mounts, need to bring the saved
+	// content in the text editor
+	componentDidMount() {
+		console.log('mounted');
+		let docId = this.props.match.params.docId;
+		let cont = '';
+		let content;
+		fetch(`http://447cf3ab.ngrok.io/document/${docId}/get`, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			credentials: 'include',
+			redirect: 'follow'
+		})
+			.then(resp => resp.json())
+			.then(respJson => {
+				if (respJson.success) {
+					cont = respJson.data;
+					console.log(respJson);
+					content = ContentState.createFromText(cont);
+					this.state.editorState = EditorState.createWithContent(content);
+				}
+			})
+			.catch(err => console.log('error on fetch req to document/get', err));
+	}
+
+	handleSave() {
+		//   console.log("inside handleSave");
+		// console.log(req.params.id);
+		// send a req to let the server handle the saving part
+		fetch(`http://447cf3ab.ngrok.io/document/${this.docId}/save`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				content: this.state.editorState.getCurrentContent().getPlainText()
+			}),
+			credentials: 'include',
+			redirect: 'follow'
+		})
+			.then(resp => resp.json())
+			.then(respJson => {
+				if (respJson.success) {
+					console.log(respJson.data);
+					console.log('document saved');
+				}
+			})
+			.catch(err => console.log('error while saving document', err));
+	}
+
 	customStyleFn(style, block) {
 		console.log('custom style fn  ==================', style, block);
 		if (style.has('selected_backward')) {
@@ -219,6 +272,29 @@ export default class App extends React.Component {
 		}
 	}
 
+	// this function adds collaborator of document using entered email
+	addCollab() {
+		fetch(`http://447cf3ab.ngrok.io/document/${this.docId}/addCollab`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				email: this.state.collab
+			}),
+			credentials: 'include',
+			redirect: 'follow'
+		})
+			.then(resp => resp.json())
+			.then(respJson => {
+				if (respJson.success) {
+					console.log('add collab success');
+					this.setState({ collab: '' });
+				}
+			})
+			.catch(err => console.log('error while saving document', err));
+	}
+
 	render() {
 		return (
 			<div id='content'>
@@ -234,6 +310,16 @@ export default class App extends React.Component {
 						customStyleFn={this.customStyleFn}
 					/>
 				</div>
+				<button onClick={() => this.handleSave()}>Save</button>
+				<input
+					type='text'
+					name='addCollaborators'
+					className='form-control'
+					placeHolder='enter email of collaborators'
+					onChange={e => this.setState({ collab: e.target.value })}
+					value={this.state.collab}
+				/>
+				<button onClick={() => this.addCollab()}>Add Collaborators</button>
 			</div>
 		);
 	}

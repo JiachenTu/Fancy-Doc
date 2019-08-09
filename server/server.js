@@ -10,16 +10,19 @@ const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
 const { User, Document } = require('./models');
 const crypto = require('crypto');
+// cors is used for avoiding cross-origin error from browser
 const cors = require('cors');
-
+// import socket.io package
 const socket = require('socket.io');
 
-//routes
+// routes
 const dbAuth = require('./routes/auth.js');
 const dbIndex = require('./routes/index.js');
 
 const app = express();
+// defines the server that uses http, so that it changes to server listening to port instead of app
 const server = require('http').createServer(app);
+// use io to connect to server
 const io = socket(server);
 //
 app.use(express.static(path.join(__dirname, 'public')));
@@ -117,8 +120,8 @@ app.use(passport.session());
 app.use('/', dbAuth(passport, hash));
 app.use('/', dbIndex());
 
-// io.on('connection', socket => {
-// 	console.log('a socket connected');
+// io.on("connection", socket => {
+//   console.log("a socket connected");
 // });
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
