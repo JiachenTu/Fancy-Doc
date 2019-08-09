@@ -53,7 +53,22 @@ module.exports = function() {
 		});
 	});
 
-	// when user click the link for a document, we provide the document object from database
+	// save the doc in the database (it should already exist
+	// since we save it in the db when creating it) when the user clicks save
+	router.post('/document/save', (req, res) => {
+		console.log('req.body here is ', req.body);
+		let docTitle = req.body.docTitle; // look at req.body
+		let docId = req.body.docId;  // need to make sure this is correct
+		Document.findByIdAndUpdate(docId, {content: newContent},
+			{new: true}, (err, updatedDoc) => {
+			if (err) console.log('error in /document/save route', err)
+			else {
+				res.json({ success: true, data: updatedDoc });
+			}
+		});
+	});
+
+	// when user clicks the link for a document, we provide the document object from database
 	router.post('/document/edit', (req, res) => {
 		if (!req.body.title) {
 			res.json({

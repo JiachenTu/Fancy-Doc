@@ -26,6 +26,30 @@ export default class App extends React.Component {
     );
   }
 
+  handleSave() {
+    console.log('inside handleSave');
+    // send a req to let the server handle the saving part
+    fetch("http://6dd22f73.ngrok.io/document/save", {
+      method: 'POST',
+      headers: {
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+          docId:  '1', // dummy value for now -------------------
+          title: 'ola' // dummy title for now -------------------
+      }),
+      credentials: 'include',
+      redirect: 'follow',
+  })
+  .then(resp => resp.json())
+  .then(respJson => {
+      if (respJson.success) {
+          console.log("document saved");
+      }
+  })
+  .catch(err => console.log('error while saving document', err));
+  }
+
   render() {
     return (
       <div id="content">
@@ -40,6 +64,7 @@ export default class App extends React.Component {
             onChange={this.onChange}
           />
         </div>
+        <button onClick={() => this.handleSave()}>Save</button>
       </div>
     );
   }
