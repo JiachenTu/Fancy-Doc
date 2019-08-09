@@ -3,104 +3,117 @@ import { Redirect, Link } from "react-router-dom";
 import Box from "../components/Box";
 
 function UserPortal(props) {
+  const [ownedDocs, setOwnedDocs] = useState([]);
+  const [collabDocs, setCollabDocs] = useState([]);
+  const [title, setTitle] = useState("");
+  const [tracker, setTracker] = useState(false);
+  const [newDocId, setNewDocId] = useState("");
 
-    const [ownedDocs, setOwnedDocs] = useState([]);
-    const [collabDocs, setCollabDocs] = useState([]);
-    const [title, setTitle] = useState('');
-    const [tracker, setTracker] = useState(false)
-    const [newDocId, setNewDocId] = useState('');
+  let userId;
+  if (props.location.state) userId = props.location.state.userId;
 
-    let userId;
-    if (props.location.state)
-        userId = props.location.state.userId;
+  console.log("props here is ", props);
 
-    console.log('props here is ', props);
+  useEffect(() => {
+    if (!props.location.state) return;
 
-    useEffect(() => {
-        if (!props.location.state) return;
+    fetch("http://447cf3ab.ngrok.io/userportal", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ userId }),
+      credentials: "include",
+      redirect: "follow"
+    })
+      .then(resp => resp.json())
+      .then(respJson => {
+        console.log(respJson);
+        if (respJson.success) {
+          // do thing here
+          console.log(respJson);
+          setOwnedDocs(respJson.data.owned);
+          setCollabDocs(respJson.data.collaborated);
+        }
+      })
+      .catch(err => console.log("fetch document error", err));
+  }, [tracker]);
 
+  function handleSubmit(e) {
+    e.preventDefault();
 
-        fetch("http://447cf3ab.ngrok.io/userportal", {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({userId}),
-            credentials: 'include',
-            redirect: 'follow',
-        })
-        .then(resp => resp.json())
-        .then(respJson => {
-            console.log(respJson)
-            if (respJson.success) {
-                // do thing here
-                console.log(respJson)
-                setOwnedDocs(respJson.data.owned);
-                setCollabDocs(respJson.data.collaborated);
-            }
-        })
-        .catch(err => console.log('fetch document error', err));
-    }, [tracker])
+    fetch("http://447cf3ab.ngrok.io/document/new", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        owner: userId,
+        title: title
+      }),
+      credentials: "include",
+      redirect: "follow"
+    })
+      .then(resp => resp.json())
+      .then(respJson => {
+        // console.log(respJson)
+        if (respJson.success) {
+          // do thing here
+          console.log("document created");
+          setTracker(!tracker);
+          setTitle("");
+          // console.log(respJson);
+          setNewDocId(respJson._id);
+          // return <Redirect to='/login' />;
+          // return (<Redirect to={{pathname: "/editor/" + ownedDocs[ownedDocs.length - 1]._id}} />)
+        }
+      })
+      .catch(err => console.log("error while creating document", err));
+    // make sure to specify the id of the specific user
+  }
 
-    function handleSubmit(e) {
-        e.preventDefault();
+  if (!props.location.state) {
+    alert("please log in first to be able to visit userportal");
+    return <Redirect to="/login" />;
+  }
+  if (newDocId != "") {
+    return <Redirect to={"/editor/" + newDocId} />;
+  }
 
-        fetch("http://447cf3ab.ngrok.io/document/new", {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                owner: userId,
-                title: title
-            }),
-            credentials: 'include',
-            redirect: 'follow',
-        })
-        .then(resp => resp.json())
-        .then(respJson => {
-            // console.log(respJson)
-            if (respJson.success) {
-                // do thing here
-                console.log("document created");
-                setTracker(!tracker)
-                setTitle('')
-                // console.log(respJson);
-                setNewDocId(respJson._id);
-                // return <Redirect to='/login' />;
-                // return (<Redirect to={{pathname: "/editor/" + ownedDocs[ownedDocs.length - 1]._id}} />)
-            }
-        })
-        .catch(err => console.log('error while creating document', err));
-        // make sure to specify the id of the specific user
-    }
-
-    if (!props.location.state) {
-        alert('please log in first to be able to visit userportal');
-        return <Redirect to='/login' />;
-    };
-    if (newDocId != '') {
-        return <Redirect to={'/editor/'+newDocId} />
-    }
-
-
-    return (
+  return (
     <div>
-        <h1>Documents Portal </h1>
+      <h1>Documents Portal </h1>
 
-        <input type='text' name='newDocTitle' placeholder='new document title' value={title} onChange = {(e)=> setTitle(e.target.value)} />
-        <button onClick={(e) => handleSubmit(e)}>Create new document</button>
-        <div style={StyleSheet.box}>
-            <div>Owned Docs:</div>
-            <div>
-                <ul>{ownedDocs.map((doc) => <li key={doc._id}><a href={"/editor/" + doc._id}>{doc.title}</a></li>)}</ul>
-            </div>
-            <div>Collaborated Docs:</div>
-            <div>
-                <ul>{collabDocs.map((doc) => <li>{doc.title}</li>)}</ul>
-            </div>
+      <input
+        type="text"
+        name="newDocTitle"
+        placeholder="new document title"
+        onChange={e => setTitle(e.target.value)}
+      />
+      <button onClick={e => handleSubmit(e)}>Create new document</button>
+      <div style={StyleSheet.box}>
+        <div>Owned Docs:</div>
+        <div>
+          <ul>
+            {ownedDocs.map(doc => (
+              <li key={doc._id}>
+                <Link to={"/editor/" + doc._id}>{doc.title}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>Collaborated Docs:</div>
+        <div>
+          <ul>
+            {collabDocs.map(doc => (
+              <li key={doc._id}>
+                <Link to={"/editor/" + doc._id}>{doc.title}</Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
+    </div>
   );
 }
 
