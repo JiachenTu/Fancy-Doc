@@ -122,9 +122,15 @@ app.use(passport.session());
 app.use("/", dbAuth(passport, hash));
 app.use("/", dbIndex());
 
+<<<<<<< HEAD
 io.on("connection", socket => {
   console.log("a socket connected");
 });
+=======
+// io.on('connection', socket => {
+// 	console.log('a socket connected');
+// });
+>>>>>>> 4928c03d3c97310680d04ab58cae2f4fb9bea2cc
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error("Not Found");
