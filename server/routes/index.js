@@ -69,21 +69,40 @@ module.exports = function() {
   // when user click the link for a document, we provide the document object from database
   // save the doc in the database (it should already exist
   // since we save it in the db when creating it) when the user clicks save
-  router.post("/:id/save", (req, res) => {
-    const docId = req.params.id;
+  router.post("/document/:docId/save", (req, res) => {
+    const docid = req.params.docId;
     // console.log('req.body here is ', req.body);
 
-    Document.findById(docId).exec((err, doc) => {
+    Document.findById(docid).exec((err, doc) => {
       if (err) return res.json({ success: false, error: err });
       doc.content = req.body.content;
       doc.save((err, doc) => {
         if (err) return res.json({ success: false, error: err });
-
         res.json({ success: true, data: req.body.content });
       });
     });
 
-    //add collaborator: --> (email, documentId)
+    // add collaborator in userportal
+    router.post("/document/:docId/addCollab", (req, res) => {
+      const docid = req.params.docId;
+
+      Document.findById(docid).exec((err, doc) => {
+        if (err) return res.json({ success: false, error: err });
+        User.findOne({ email: req.body.email }).exec((err2, user) => {
+          if (err2) return res.json({ success: false, error: err2 });
+          if (!user)
+            return res.json({
+              success: false,
+              error: "user is not found from the email entered"
+            });
+          doc.collaborators.push(user._id);
+          doc.save((err, doc) => {
+            res.json({ success: true, data: doc });
+          });
+        });
+      });
+    });
+    // add collaborator: --> (email, documentId)
     router.post("/document/collaborate/add", (req, res) => {
       console.log("/document/password/add", req.body);
       if (!req.body.email || !req.body.documentId) {
@@ -121,7 +140,7 @@ module.exports = function() {
       });
     });
 
-    //add password -->(password, documentId)
+    // add password -->(password, documentId)
     router.post("/document/password/add", (req, res) => {
       console.log("/document/password/add", req.body);
       if (!req.body.password || !req.body.documentId) {

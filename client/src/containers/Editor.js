@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { EditorState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
 import "../css/App.css";
 import React, { Component } from "react";
@@ -9,25 +8,14 @@ import { is } from "immutable";
 import { debounce } from "lodash";
 const serverURL = "http://localhost:8080";
 // link the socket to the server
-=======
-import { EditorState, RichUtils, convertFromRaw, convertToRaw } from 'draft-js';
-import '../css/App.css';
-import React, { Component } from 'react';
-import Editor from 'draft-js-plugins-editor';
-import io from 'socket.io-client';
-import { is } from 'immutable';
-// import { debounce } from 'lodash';
-const serverURL = 'http://localhost:8080';
->>>>>>> 4928c03d3c97310680d04ab58cae2f4fb9bea2cc
 const socket = io(serverURL);
 // const docId = req.params.id;
 
 export default class App extends React.Component {
-<<<<<<< HEAD
   constructor(props) {
     super(props);
     // console.log(props.match.params.docId);
-    this.state = { editorState: EditorState.createEmpty() };
+    this.state = { editorState: EditorState.createEmpty(), collab: "" };
 
     this.docId = props.match.params.docId;
     // this.sendData = debounce(
@@ -157,72 +145,6 @@ export default class App extends React.Component {
     // 	this.state.editorState.getCurrentContent().toJS()
     // );
   }
-=======
-	constructor(props) {
-		super(props);
-		this.state = { editorState: EditorState.createEmpty() };
-		this.first = true;
-		this.onChange = editorState => {
-			console.log('============ ON CHANGE ===============');
-			console.log('changed contentState:', editorState.getCurrentContent().toJS());
-			console.log('original contentState:', this.state.editorState.getCurrentContent().toJS());
-			const isContentChanged = is(
-				this.state.editorState.getCurrentContent().getBlockMap(),
-				editorState.getCurrentContent().getBlockMap()
-			);
-			console.log('isContentChanged', isContentChanged);
-			this.setState({ editorState });
-			if (isContentChanged) {
-				socket.emit('selection_update_push', convertToRaw(editorState.getCurrentContent()));
-			} else {
-				socket.emit('content_update_push', convertToRaw(editorState.getCurrentContent()));
-			}
-		};
-		socket.on('content_update_merge', receivedContentState => {
-			console.log('updating editorState with new contentState');
-			let contentStateToUpd = convertFromRaw(receivedContentState);
-			let currentState = this.state.editorState.getCurrentContent();
-			let finalContentState = currentState
-				.set('blockMap', contentStateToUpd.getBlockMap())
-				.set('entityMap', contentStateToUpd.getEntityMap());
-			const updEditorState = EditorState.push(
-				this.state.editorState,
-				finalContentState,
-				'change-block-data'
-			);
-			let newEditorState = EditorState.forceSelection(
-				updEditorState,
-				updEditorState.getSelection()
-			);
-			this.setState({ editorState: newEditorState });
-		});
-
-		socket.on('selection_update_merge', receivedContentState => {
-			console.log('updating editorState with new selectionState');
-			let contentStateToUpd = convertFromRaw(receivedContentState);
-			let currentState = this.state.editorState.getCurrentContent();
-			let finalContentState = currentState
-				.set('blockMap', contentStateToUpd.getBlockMap())
-				.set('entityMap', contentStateToUpd.getEntityMap());
-			const updEditorState = EditorState.push(
-				this.state.editorState,
-				finalContentState,
-				'change-block-data'
-			);
-			let newEditorState = EditorState.acceptSelection(
-				updEditorState,
-				updEditorState.getSelection()
-			);
-			this.setState({ editorState: newEditorState });
-		});
-	}
-
-	componentDidMount() {
-		socket.on('start', msg => {
-			console.log(msg);
-		});
-	}
->>>>>>> 4928c03d3c97310680d04ab58cae2f4fb9bea2cc
 
   _onBoldClick() {
     this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, "BOLD"));
@@ -244,7 +166,7 @@ export default class App extends React.Component {
     //   console.log("inside handleSave");
     // console.log(req.params.id);
     // send a req to let the server handle the saving part
-    fetch(`http://localhost:8080/${this.docId}/save`, {
+    fetch(`http://localhost:8080/document/${this.docId}/save`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -265,6 +187,29 @@ export default class App extends React.Component {
       .catch(err => console.log("error while saving document", err));
   }
 
+  // this function adds collaborator of document using entered email
+  addCollab() {
+    fetch(`http://localhost:8080/document/${this.docId}/addCollab`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: this.state.collab
+      }),
+      credentials: "include",
+      redirect: "follow"
+    })
+      .then(resp => resp.json())
+      .then(respJson => {
+        if (respJson.success) {
+          console.log("add collab success");
+          this.setState({ collab: "" });
+        }
+      })
+      .catch(err => console.log("error while saving document", err));
+  }
+
   render() {
     return (
       <div id="content">
@@ -280,6 +225,15 @@ export default class App extends React.Component {
           />
         </div>
         <button onClick={() => this.handleSave()}>Save</button>
+        <input
+          type="text"
+          name="addCollaborators"
+          className="form-control"
+          placeHolder="enter email of collaborators"
+          onChange={e => this.setState({ collab: e.target.value })}
+          value={this.state.collab}
+        />
+        <button onClick={() => this.addCollab()}>Add Collaborators</button>
       </div>
     );
   }
