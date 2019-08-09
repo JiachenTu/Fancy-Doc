@@ -59,7 +59,13 @@ function UserPortal(props) {
         if (respJson.success) {
           // do thing here
           console.log("document created");
-          tracker = !tracker;
+          console.log("create doc", respJson);
+          setTracker(!tracker);
+          setTitle("");
+          // console.log(respJson);
+          setNewDocId(respJson._id);
+          // return <Redirect to='/login' />;
+          // return (<Redirect to={{pathname: "/editor/" + ownedDocs[ownedDocs.length - 1]._id}} />)
         }
       })
       .catch(err => console.log("error while creating document", err));

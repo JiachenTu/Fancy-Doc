@@ -46,7 +46,7 @@ module.exports = function() {
         user.save((err, user) => {
           if (err) return res.json({ success: false, error: err });
 
-          res.json({ success: true });
+          res.json({ success: true, _id: doc._id });
         });
       });
     });
@@ -66,6 +66,20 @@ module.exports = function() {
     });
   });
 
+  // when user clicks the link for a document, we provide the document object from database
+  router.get("/document/:docId/get", (req, res) => {
+    const docid = req.params.docId;
+    if (!docid) {
+      res.json({
+        success: false,
+        error: "should pass in the id of the document"
+      });
+    }
+    Document.findById(docid).exec((err, doc) => {
+      if (err) res.json({ success: false, error: err });
+      res.json({ success: true, data: doc.content });
+    });
+  });
   // when user click the link for a document, we provide the document object from database
   // save the doc in the database (it should already exist
   // since we save it in the db when creating it) when the user clicks save
