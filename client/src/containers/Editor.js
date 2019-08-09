@@ -1,7 +1,15 @@
-import { EditorState, RichUtils, ContentState } from "draft-js";
+import { EditorState, RichUtils, ContentState, convertFromRaw, convertToRaw } from "draft-js";
 import "../css/App.css";
 import React, { Component } from "react";
 import Editor from "draft-js-plugins-editor";
+// client side socket io is imported
+import io from "socket.io-client";
+import { is } from "immutable";
+import { debounce } from "lodash";
+const serverURL = "http://localhost:8080";
+// link the socket to the server
+const socket = io(serverURL);
+// const docId = req.params.id;
 
 export default class App extends React.Component {
   constructor(props) {
@@ -52,46 +60,54 @@ export default class App extends React.Component {
         }
     })
     .catch(err => console.log('error on fetch req to document/get', err));
-
-    // Document.findById(docId, function(err, doc) {
-    //   if (err) {
-    //     console.log('error ', err);
-    //   }
-    //   else {
-    //     cont = doc.content;
-    //     console.log('the content is ', cont);
-    //   }
-    // })
   }
 
   handleSave() {
-    console.log('inside handleSave');
+    //   console.log("inside handleSave");
+    // console.log(req.params.id);
     // send a req to let the server handle the saving part
-    // debugger;
-    fetch("http://6dd22f73.ngrok.io/document/save", {
-      method: 'POST',
+    fetch(`http://localhost:8080/document/${this.docId}/save`, {
+      method: "POST",
       headers: {
-          "Content-Type": "application/json"
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
-          docId:  this.props.match.params.docId, // dummy value for now -------------------
-          newContent: this.state.editorState.getCurrentContent().getPlainText() // this.state.editorState.getCurrentContent().getBlockMap().get(this.state.editorState.getSelection().getAnchorKey()).getText() // dummy value for now -------------------
+        content: this.state.editorState.getCurrentContent().getPlainText()
       }),
-      credentials: 'include',
-      redirect: 'follow',
+      credentials: "include",
+      redirect: "follow"
     })
-    .then(resp => resp.json())
-    .then(respJson => {
+      .then(resp => resp.json())
+      .then(respJson => {
         if (respJson.success) {
-            console.log("document saved");
+          console.log(respJson.data);
+          console.log("document saved");
         }
-    })
-    .catch(err => console.log('error on fetch req to document/save', err));
+      })
+      .catch(err => console.log("error while saving document", err));
   }
 
-  // helper func to see how to access the text inside the box
-  handleText() {
-    console.log('It is ', this.state.editorState.getCurrentContent().getPlainText());
+  // this function adds collaborator of document using entered email
+  addCollab() {
+    fetch(`http://localhost:8080/document/${this.docId}/addCollab`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: this.state.collab
+      }),
+      credentials: "include",
+      redirect: "follow"
+    })
+      .then(resp => resp.json())
+      .then(respJson => {
+        if (respJson.success) {
+          console.log("add collab success");
+          this.setState({ collab: "" });
+        }
+      })
+      .catch(err => console.log("error while saving document", err));
   }
 
   render() {
@@ -109,7 +125,15 @@ export default class App extends React.Component {
           />
         </div>
         <button onClick={() => this.handleSave()}>Save</button>
-        <button onClick={() => this.handleText()}>Text</button>
+        <input
+          type="text"
+          name="addCollaborators"
+          className="form-control"
+          placeHolder="enter email of collaborators"
+          onChange={e => this.setState({ collab: e.target.value })}
+          value={this.state.collab}
+        />
+        <button onClick={() => this.addCollab()}>Add Collaborators</button>
       </div>
     );
   }

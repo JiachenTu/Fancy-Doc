@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
-import {Redirect} from 'react-router-dom';
-import Box from '../components/Box';
+import React, { useState, useEffect } from "react";
+import { Redirect, Link } from "react-router-dom";
+import Box from "../components/Box";
 
 function UserPortal(props) {
 
@@ -100,9 +100,8 @@ function UserPortal(props) {
                 <ul>{collabDocs.map((doc) => <li>{doc.title}</li>)}</ul>
             </div>
         </div>
-    </div>
-
-    )
+      </div>
+  );
 }
 
 // app.post('/editor/:id/save', function(req, res) {
@@ -110,8 +109,13 @@ function UserPortal(props) {
 // });
 
 let StyleSheet = {
-    box: {height:'10%', width:'%', border:'2px solid black',
-            margin:'2%', padding:'1%'}
-}
+  box: {
+    height: "10%",
+    width: "%",
+    border: "2px solid black",
+    margin: "2%",
+    padding: "1%"
+  }
+};
 
 export default UserPortal;
