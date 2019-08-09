@@ -9,17 +9,17 @@ function Login() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    fetch("http://localhost:8080/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      credentials: "include",
-      // redirect: 'follow',
-      body: JSON.stringify({
-        username: username,
-        password: password
-      })
+    fetch("http://447cf3ab.ngrok.io/login", {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: 'include',
+        // redirect: 'follow',
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
     })
       .then(resp => resp.json())
       .then(respJson => {

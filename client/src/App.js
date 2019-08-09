@@ -23,7 +23,6 @@ class App extends React.Component {
             {/* <Route path="/editor" component={Editor} /> */}
             <Route exact={true} path="/login" component={Login} />
             <Route exact={true} path="/register" component={Register} />
-            <Route exact={true} path="/editor" component={Editor} />
             <Route exact={true} path="/editor/:docId" component={Editor} />
             <Route exact={true} path="/userportal" component={UserPortal} />
             {/* <Route path="/directory" component={Directory} /> */}

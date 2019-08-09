@@ -6,17 +6,18 @@ function UserPortal(props) {
   const [ownedDocs, setOwnedDocs] = useState([]);
   const [collabDocs, setCollabDocs] = useState([]);
   const [title, setTitle] = useState("");
+  const [tracker, setTracker] = useState(false);
+  const [newDocId, setNewDocId] = useState("");
 
   let userId;
-  let tracker = false;
   if (props.location.state) userId = props.location.state.userId;
 
-  //   console.log("props here is ", props);
+  console.log("props here is ", props);
 
   useEffect(() => {
     if (!props.location.state) return;
 
-    fetch("http://localhost:8080/userportal", {
+    fetch("http://447cf3ab.ngrok.io/userportal", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -41,7 +42,7 @@ function UserPortal(props) {
   function handleSubmit(e) {
     e.preventDefault();
 
-    fetch("http://localhost:8080/document/new", {
+    fetch("http://447cf3ab.ngrok.io/document/new", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -59,7 +60,6 @@ function UserPortal(props) {
         if (respJson.success) {
           // do thing here
           console.log("document created");
-          console.log("create doc", respJson);
           setTracker(!tracker);
           setTitle("");
           // console.log(respJson);
@@ -75,6 +75,9 @@ function UserPortal(props) {
   if (!props.location.state) {
     alert("please log in first to be able to visit userportal");
     return <Redirect to="/login" />;
+  }
+  if (newDocId != "") {
+    return <Redirect to={"/editor/" + newDocId} />;
   }
 
   return (
@@ -113,6 +116,10 @@ function UserPortal(props) {
     </div>
   );
 }
+
+// app.post('/editor/:id/save', function(req, res) {
+//     req.params.id;
+// });
 
 let StyleSheet = {
   box: {

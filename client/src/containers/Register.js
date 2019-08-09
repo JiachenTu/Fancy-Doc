@@ -7,32 +7,32 @@ function Register() {
   const [email, setEmail] = useState("");
   const [registered, setRegistered] = useState(false);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    console.log("username", username);
-    fetch("http://localhost:8080/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      credentials: "include",
-      redirect: "follow",
-      body: JSON.stringify({
-        username: username,
-        password: password,
-        email: email
-      })
-    })
-      .then(resp => resp.json())
-      .then(respJson => {
-        console.log("respJson is ", respJson);
-        if (respJson.success) {
-          console.log("successfully registered!");
-          setRegistered(true);
-        }
-      })
-      .catch(err => console.log("An error occurred here", err));
-  }
+    function handleSubmit(e) {
+        e.preventDefault();
+        console.log('username',username);
+        fetch('http://447cf3ab.ngrok.io/register', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: 'include',
+            redirect: 'follow',
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                email: email
+            })
+        })
+        .then(resp => resp.json())
+        .then(respJson => {
+            console.log('respJson is ', respJson)
+            if (respJson.success) {
+                console.log('successfully registered!');
+                setRegistered(true);
+            }
+        })
+        .catch(err => console.log('An error occurred here', err))
+    }
 
   if (registered) {
     alert("You are registered but you need to login pls");
