@@ -229,7 +229,7 @@ export default class App extends React.Component {
           type="text"
           name="addCollaborators"
           className="form-control"
-          placeHolder="enter email of collaborators"
+          placeHolder="enter email of one collaborator"
           onChange={e => this.setState({ collab: e.target.value })}
           value={this.state.collab}
         />

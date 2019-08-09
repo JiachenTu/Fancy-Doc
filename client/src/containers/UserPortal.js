@@ -97,7 +97,9 @@ function UserPortal(props) {
         <div>
           <ul>
             {collabDocs.map(doc => (
-              <li>{doc.title}</li>
+              <li key={doc._id}>
+                <Link to={"/editor/" + doc._id}>{doc.title}</Link>
+              </li>
             ))}
           </ul>
         </div>
