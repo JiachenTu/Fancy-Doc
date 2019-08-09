@@ -36,9 +36,9 @@ io.on("connection", socket => {
     console.log("emit content_update_merge");
     io.emit("content_update_merge", receivedContentState);
   });
-  socket.on("selection_update_push", receivedContentState => {
+  socket.on("selection_update_push", receivedSelectionState => {
     console.log("--emit selection_update_push");
-    io.emit("selection_update_merge", receivedContentState);
+    io.emit("selection_update_merge", receivedSelectionState);
   });
 });
 
@@ -122,9 +122,9 @@ app.use(passport.session());
 app.use("/", dbAuth(passport, hash));
 app.use("/", dbIndex());
 
-io.on("connection", socket => {
-  console.log("a socket connected");
-});
+// io.on("connection", socket => {
+//   console.log("a socket connected");
+// });
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error("Not Found");

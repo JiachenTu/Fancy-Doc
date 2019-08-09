@@ -20,7 +20,7 @@ function UserPortal(props) {
         if (!props.location.state) return;
 
 
-        fetch("http://6dd22f73.ngrok.io/userportal", {
+        fetch("http://447cf3ab.ngrok.io/userportal", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
@@ -45,7 +45,7 @@ function UserPortal(props) {
     function handleSubmit(e) {
         e.preventDefault();
 
-        fetch("http://6dd22f73.ngrok.io/document/new", {
+        fetch("http://447cf3ab.ngrok.io/document/new", {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"

@@ -42,7 +42,7 @@ export default class App extends React.Component {
     let docId = this.props.match.params.docId;
     let cont = '';
     let content;
-    fetch( `http://6dd22f73.ngrok.io/document/${docId}/get`, {
+    fetch( `http://447cf3ab.ngrok.io/document/${docId}/get`, {
       method: 'GET',
       headers: {
           "Content-Type": "application/json"
@@ -66,7 +66,7 @@ export default class App extends React.Component {
     //   console.log("inside handleSave");
     // console.log(req.params.id);
     // send a req to let the server handle the saving part
-    fetch(`http://localhost:8080/document/${this.docId}/save`, {
+    fetch(`http://447cf3ab.ngrok.io/document/${this.docId}/save`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -89,7 +89,7 @@ export default class App extends React.Component {
 
   // this function adds collaborator of document using entered email
   addCollab() {
-    fetch(`http://localhost:8080/document/${this.docId}/addCollab`, {
+    fetch(`http://447cf3ab.ngrok.io/document/${this.docId}/addCollab`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
