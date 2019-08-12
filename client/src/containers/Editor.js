@@ -45,10 +45,11 @@ export default class App extends React.Component {
     .then(resp => resp.json())
     .then(respJson => {
         if (respJson.success) {
-            cont = respJson.data;
-            console.log(respJson)
-            content = ContentState.createFromText(cont);
-            this.state.editorState = EditorState.createWithContent(content);
+            const retContentState = (JSON.parse(respJson.data).contentState);
+            console.log(respJson.data)
+            const contentState = convertFromRaw(retContentState);
+            console.log("ContentState --",contentState)
+            this.setState({editorState: EditorState.createWithContent(contentState)}); // buggy line previously
         }
     })
     .catch(err => console.log('error on fetch req to document/get', err));
@@ -67,18 +68,16 @@ export default class App extends React.Component {
   handleSave() {
     console.log('inside handleSave');
     // send a req to let the server handle the saving part
-    // debugger;
-    fetch("http://6dd22f73.ngrok.io/document/save", {
-      method: 'POST',
+    console.log('this.props is ', this.props);
+    let docId = this.props.match.params.docId;
+    fetch(`http://447cf3ab.ngrok.io/document/${docId}/save`, {
+      method: "POST",
       headers: {
           "Content-Type": "application/json"
       },
       body: JSON.stringify({
-          docId:  this.props.match.params.docId, // dummy value for now -------------------
-          newContent: this.state.editorState.getCurrentContent().getPlainText() // this.state.editorState.getCurrentContent().getBlockMap().get(this.state.editorState.getSelection().getAnchorKey()).getText() // dummy value for now -------------------
-      }),
-      credentials: 'include',
-      redirect: 'follow',
+        content: JSON.stringify({contentState: convertToRaw(this.state.editorState.getCurrentContent())}) }), credentials: "include",
+      redirect: "follow"
     })
     .then(resp => resp.json())
     .then(respJson => {
@@ -89,9 +88,28 @@ export default class App extends React.Component {
     .catch(err => console.log('error on fetch req to document/save', err));
   }
 
-  // helper func to see how to access the text inside the box
-  handleText() {
-    console.log('It is ', this.state.editorState.getCurrentContent().getPlainText());
+  // this function adds collaborator of document using entered email
+  addCollab() {
+    let docId = this.props.match.params.docId;
+    fetch(`http://447cf3ab.ngrok.io/document/${docId}/addCollab`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: this.state.collab
+      }),
+      credentials: "include",
+      redirect: "follow"
+    })
+      .then(resp => resp.json())
+      .then(respJson => {
+        if (respJson.success) {
+          console.log("add collab success");
+          this.setState({ collab: "" });
+        }
+      })
+      .catch(err => console.log("error while saving document", err));
   }
 
   render() {

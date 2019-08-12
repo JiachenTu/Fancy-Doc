@@ -84,9 +84,32 @@ module.exports = function() {
 		}
 		Document.findById(docid).exec((err, doc) => {
 			if (err) res.json({ success: false, error: err });
+			console.log("got content from doc", doc.content)
 			res.json({ success: true, data: doc.content });
 		});
 	});
+  // when user click the link for a document, we provide the document object from database
+  // save the doc in the database (it should already exist
+  // since we save it in the db when creating it) when the user clicks save
+  router.post("/document/:docId/save", (req, res) => {
+    const docid = req.params.docId;
+    console.log('req.body here is ', docid, req.body);
+
+
+    Document.findById(docid).exec((err, doc) => {
+		if (err) return res.json({ success: false, error: err });
+		const content = typeof req.body.content === "string" ?
+			JSON.parse(req.body.content) :
+			req.body.content;
+		doc.content = req.body.content;
+		//doc.content -- to be parsed: convertFromRaw(JSON.parse(doc.content).contentState)
+		// console.log("newDoc", doc);
+      doc.save((err, retDoc) => {
+		if (err) return res.json({ success: false, error: err });
+		console.log("saving doc", retDoc.content)
+        res.json({ success: true, data: retDoc.content });
+      });
+    });
 
 	//add collaborator: --> (email, documentId)
 	router.post('/document/collaborate/add', (req, res) => {

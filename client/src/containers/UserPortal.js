@@ -83,6 +83,7 @@ function UserPortal(props) {
         return <Redirect to={'/editor/'+newDocId} />
     }
 
+    console.log('doc is ', ownedDocs);
 
     return (
     <div>
