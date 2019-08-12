@@ -53,10 +53,11 @@ export default class App extends React.Component {
     .then(resp => resp.json())
     .then(respJson => {
         if (respJson.success) {
-            cont = respJson.data;
-            console.log(respJson)
-            content = ContentState.createFromText(cont);
-            this.state.editorState = EditorState.createWithContent(content);
+            const retContentState = (JSON.parse(respJson.data).contentState);
+            console.log(respJson.data)
+            const contentState = convertFromRaw(retContentState);
+            console.log("ContentState --",contentState)
+            this.setState({editorState: EditorState.createWithContent(contentState)}); // buggy line previously
         }
     })
     .catch(err => console.log('error on fetch req to document/get', err));
@@ -66,15 +67,15 @@ export default class App extends React.Component {
     //   console.log("inside handleSave");
     // console.log(req.params.id);
     // send a req to let the server handle the saving part
-    fetch(`http://447cf3ab.ngrok.io/document/${this.docId}/save`, {
+    console.log('this.props is ', this.props);
+    let docId = this.props.match.params.docId;
+    fetch(`http://447cf3ab.ngrok.io/document/${docId}/save`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        content: this.state.editorState.getCurrentContent().getPlainText()
-      }),
-      credentials: "include",
+        content: JSON.stringify({contentState: convertToRaw(this.state.editorState.getCurrentContent())}) }), credentials: "include",
       redirect: "follow"
     })
       .then(resp => resp.json())
@@ -89,7 +90,8 @@ export default class App extends React.Component {
 
   // this function adds collaborator of document using entered email
   addCollab() {
-    fetch(`http://447cf3ab.ngrok.io/document/${this.docId}/addCollab`, {
+    let docId = this.props.match.params.docId;
+    fetch(`http://447cf3ab.ngrok.io/document/${docId}/addCollab`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
